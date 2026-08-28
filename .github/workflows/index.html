@@ -1,43 +1,1051 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chama Youth Resource Center</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+    body {
+      background: #f9fafb;
+      color: #1e1e2a;
+    }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    /* ----- HEADER / NAVIGATION ----- */
+    header {
+      background: #0a2a4a;
+      padding: 0.8rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 300;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    .logo h1 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .logo span {
+      color: #4c882b;
+    }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    /* ---- navigation menu (desktop) ---- */
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      flex-wrap: wrap;
+    }
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #e0e8f0;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.5rem 0.9rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: #1f4b6e;
+      color: white;
+    }
+
+    .nav-btn.active {
+      background: #c9b89b;
+      color: #0a2a4a;
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 0.5rem 1.2rem;
+    }
+
+    .apply-nav {
+      background: #ebb31b;
+      color: white;
+      padding: 0.4rem 1.4rem;
+      border-radius: 40px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .apply-nav:hover {
+      background: #e99c28;
+      transform: scale(1.02);
+    }
+
+    /* ----- HAMBURGER ----- */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      padding: 5px;
+      background: transparent;
+      border: none;
+      gap: 5px;
+      z-index: 350;
+    }
+    .hamburger span {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 4px;
+      transition: 0.3s ease;
+      transform-origin: center;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* mobile menu overlay */
+    .menu-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 140;
+      backdrop-filter: blur(3px);
+    }
+    .menu-overlay.active {
+      display: block;
+    }
+
+    /* ----- ALL SECTIONS (pages) ----- */
+    .page {
+      display: none;
+      padding: 2rem 1.5rem 3rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .page.active-page {
+      display: block;
+    }
+
+    #home {
+      background: #e2f0da;
+      padding-top: 0;
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    /* ----- CAROUSEL ----- */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 550px;
+      overflow: hidden;
+      background: #1e2b3a;
+      margin-bottom: 2rem;
+    }
+
+    .carousel-content {
+      position: absolute;
+      top:45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      width: 80%;
+      max-width: 900px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .carousel-slide {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .carousel-item {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      color: white;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+      background-blend-mode: overlay;
+      background-color: rgba(10, 30, 40, 0.4);
+    }
+
+    .carousel-item.active-fade {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .carousel-item h2 {
+      font-size: 5rem;
+      font-weight: 700;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      max-width: 900px;
+      line-height: 1.2;
+    }
+    .carousel-item h2 .green-welcome {
+      color: #56a82d;
+    }
+    .carousel-item p.sub {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      background: transparent;
+      padding: 0.2rem 1.2rem;
+      border-radius: 0;
+      backdrop-filter: none;
+    }
+
+    .carousel-btn-apply {
+      margin-top: 1.8rem;
+      background: #ebb31b;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 600;
+      padding: 0.8rem 3rem;
+      border-radius: 60px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: 0.2s;
+      z-index: 5;
+    }
+    .carousel-btn-apply:hover {
+      background: #e99c28;
+      transform: scale(1.04);
+    }
+
+    .section-content {
+      margin-top: auto;
+      align-content: center;
+      padding: 2rem 1.5rem 3rem;
+      max-width: 400px;
+    }
+
+    .main-content {
+      margin: 0 60px;
+      font-size: 1.4rem;
+      line-height: 1.6;
+    }
+
+    /* ----- EVENTS ----- */
+    .events-wrapper {
+      padding: 0 1.5rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .events-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .events-header h3 {
+      font-size: 2rem;
+      color: #11248f;
+      margin-left: 60px;
+    }
+
+    .events-scroll-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .events-grid {
+      display: flex;
+      gap: 1.8rem;
+      overflow-x: auto;
+      padding: 0.5rem 0.2rem 1.2rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #0a2a4a #e2e8f0;
+    }
+
+    .events-grid::-webkit-scrollbar {
+      height: 8px;
+    }
+    .events-grid::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 10px;
+    }
+    .events-grid::-webkit-scrollbar-thumb {
+      background: #0a2a4a;
+      border-radius: 10px;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 24px;
+      padding: 1rem 1rem 1.2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition: 0.2s;
+      min-width: 280px;
+      max-width: 320px;
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .event-card .card-carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: #d9d9d9;
+      height: 180px;
+      flex-shrink: 0;
+    }
+
+    .card-carousel .card-slide {
+      display: flex;
+      transition: transform 0.3s ease;
+      height: 100%;
+    }
+    .card-slide img {
+      min-width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      backdrop-filter: blur(3px);
+      z-index: 2;
+    }
+    .card-nav.left { left: 6px; }
+    .card-nav.right { right: 6px; }
+
+    .event-card h4 {
+      margin: 0.8rem 0 0.3rem;
+      font-size: 1.2rem;
+    }
+
+    .video-btn-card {
+      margin-top: 0.8rem;
+      display: flex;
+      justify-content: center;
+    }
+    .video-btn-card button {
+      background: #b35017;
+      color: white;
+      border: none;
+      padding: 0.4rem 1.2rem;
+      border-radius: 25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 50%;
+      justify-content: center;
+    }
+    .video-btn-card button:hover {
+      background: #927516;
+      transform: scale(1.02);
+    }
+    .video-btn-card button i {
+      font-size: 1rem;
+    }
+
+    .event-content {
+      max-height: 4.5em;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      line-height: 1.5;
+      color: #2d3a4a;
+      font-size: 0.95rem;
+      position: relative;
+      flex: 1;
+    }
+    .event-content.expanded {
+      max-height: 500px;
+    }
+    .event-content p {
+      margin-bottom: 0.5rem;
+    }
+    .event-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .read-more-btn {
+      display: inline-block;
+      color: #1d6b8f;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0.5rem 0 0.2rem;
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    .read-more-btn:hover {
+      text-decoration: underline;
+    }
+
+    .section-header {
+      margin-left: 45px;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: rgb(36, 16, 150);
+    }
+
+    /* footer */
+    footer {
+      background: #0a2a4a;
+      color: #d4dce6;
+      padding: 2rem 2rem 1.2rem;
+      margin-top: 2rem;
+      border-radius: 6px 6px 0 0;
+    }
+    .footer-flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .footer-flex h4 { color: white; margin-bottom: 0.8rem; }
+    .footer-flex a {
+      color: #bdd2e0;
+      text-decoration: none;
+      display: block;
+      margin: 0.3rem 0;
+    }
+    .footer-contacts {
+      font-size: 14px;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .maker-id {
+      font-size: 0.7rem;
+      text-align: center;
+      color: #c9d8e8;
+    }
+
+    /* ----- MODALS ----- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-content {
+      background: white;
+      max-width: 700px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem 2rem 2.5rem;
+      border-radius: 6px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .apply-modal-head { text-align: center; color: #343497; }
+    .modal-content h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .modal-content label {
+      font-weight: 500;
+      display: block;
+      margin: 0.8rem 0 0.2rem;
+    }
+    .modal-content input, .modal-content select, .modal-content textarea {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+    .drag-box {
+      border: 2px dashed #a0b8c9;
+      border-radius: 40px;
+      padding: 2rem 0.5rem;
+      text-align: center;
+      margin: 1rem 0;
+      background: #f5f8fc;
+    }
+    .drag-box button {
+      background: #0a2a4a;
+      color: white;
+      border: none;
+      padding: 0.4rem 2rem;
+      border-radius: 60px;
+      margin-top: 0.6rem;
+      cursor: pointer;
+    }
+    .submit-btn {
+      background: #2b7a3a;
+      color: white;
+      border: none;
+      padding: 0.8rem 3rem;
+      border-radius: 60px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: block;
+      margin: 1.5rem auto 0;
+      cursor: pointer;
+    }
+
+    .doc-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .doc-modal-overlay.open { display: flex; }
+    .doc-modal-content {
+      background: white;
+      max-width: 1250px;
+      width: 95%;
+      max-height: 90vh;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      position: relative;
+      overflow-y: auto;
+    }
+    .doc-close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      color: #666;
+      cursor: pointer;
+      transition: 0.2s;
+      padding: 0 8px;
+      line-height: 1;
+    }
+    .doc-close-btn:hover { color: #c0392b; transform: rotate(90deg); }
+    .doc-list { display: grid; gap: 12px; margin: 1rem 0 1.5rem; }
+    .doc-item {
+      background: #f8f9fa;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid #e9edf2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      transition: 0.2s;
+    }
+    .doc-item:hover { background: #f0f2f5; border-color: #c8d0d8; }
+    .doc-name {
+      font-weight: 600;
+      color: #1e2a3a;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .doc-name i { color: #0a2a4a; font-size: 1.1rem; }
+    .doc-btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .doc-btn {
+      border: none;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 30px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .doc-btn i { font-size: 0.85rem; }
+    .doc-btn-download { background: #0f9d58; color: white; }
+    .doc-btn-download:hover { background: #0b8043; transform: scale(1.02); }
+    .doc-btn-open { background: #4285F4; color: white; }
+    .doc-btn-open:hover { background: #357ae8; transform: scale(1.02); }
+    .doc-btn-preview { background: #DB4437; color: white; }
+    .doc-btn-preview:hover { background: #c33d2e; transform: scale(1.02); }
+    .preview-area {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+      margin-top: 1rem;
+      border: 1px solid #e0e5ea;
+    }
+    .preview-area iframe {
+      width: 100%;
+      height: 450px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+    }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .close-preview {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .close-preview:hover { background: #c82333; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #0a2a4a;
+        flex-direction: column;
+        padding: 80px 30px 30px;
+        gap: 8px;
+        transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: -8px 0 30px rgba(0,0,0,0.3);
+        z-index: 250;
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      .nav-menu.open {
+        right: 0;
+      }
+      .nav-menu .nav-btn {
+        width: 100%;
+        text-align: left;
+        padding: 12px 16px;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        color: #e0e8f0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+      .nav-menu .nav-btn:hover {
+        background: rgba(255,255,255,0.1);
+      }
+      .nav-menu .nav-btn.active {
+        background: #c9b89b;
+        color: #0a2a4a;
+        font-size: 1.15rem;
+      }
+      .nav-menu .apply-nav {
+        width: 100%;
+        text-align: center;
+        margin-top: 12px;
+        padding: 14px;
+        font-size: 1.05rem;
+      }
+      .menu-overlay.active {
+        display: block;
+      }
+      header {
+        padding: 0.8rem 1.2rem;
+      }
+      .logo h1 { font-size: 1.2rem; }
+      .main-content { margin: 0 20px; font-size: 1.1rem; }
+      .section-header { margin-left: 20px; font-size: 1.8rem; }
+      .events-header h3 { margin-left: 20px; font-size: 1.5rem; }
+      .carousel-item h2 { font-size: 2.8rem; }
+      .carousel-item p.sub { font-size: 1.2rem; }
+      .carousel-container { height: 360px; }
+    }
+    @media (max-width: 480px) {
+      .nav-menu { width: 260px; padding: 70px 20px 20px; }
+      .nav-menu .nav-btn { font-size: 0.95rem; padding: 10px 14px; }
+      .nav-menu .apply-nav { font-size: 0.95rem; padding: 12px; }
+      .logo h1 { font-size: 1rem; }
+    }
+    .contacts { text-decoration: none; color: #442008; }
+    .grid-cards .card { background: #f0f4f8; padding: 1rem; border-radius: 16px; margin-bottom: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo"><h1>Chama <span>Youth</span> Resource Centre</h1></div>
+
+  <!-- Hamburger button -->
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Navigation Menu -->
+  <nav class="nav-menu" id="navMenu">
+    <button class="nav-btn active" data-page="home">Home</button>
+    <button class="nav-btn" data-page="about">About</button>
+    <button class="nav-btn" data-page="services">Services</button>
+    <button class="nav-btn" data-page="contact">Find Us</button>
+    <button class="apply-nav" id="applyNavBtn"><i class="fas fa-pencil-alt"></i> Apply now</button>
+  </nav>
+</header>
+
+<!-- Mobile overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- HOME PAGE -->
+<section id="home" class="page active-page">
+  <div class="carousel-container">
+    <div class="carousel-slide" id="heroSlide">
+      <div class="carousel-item active-fade"><img src="Items/head 1.jpg" alt="Slide 1" style="width:100%; height:500px; object-fit:cover;"><div class="carousel-content"><h2><span class="green-welcome">Welcome</span> to Chama Youth Resource Center</h2><p class="sub">The heart of skills development and innovation in the Chama District of Eastern Province. More than just a training institution</p><button class="carousel-btn-apply" id="heroApplyBtn">Apply now</button></div></div>
+      <div class="carousel-item active-fade"><img src="Items/head 2.jpg" alt="Slide 2" style="width:100%; height:500px; object-fit:cover;"><div class="carousel-content"><h2><span class="green-welcome">Welcome</span> to Chama Youth Resource Center</h2><p class="sub">Empowering skills, building futures in Carpentry & Joinery, ICT, Bricklaying & Plastering and in Cutting, Design & Textile Technology</p><button class="carousel-btn-apply" id="heroApplyBtn2">Apply now</button></div></div>
+      <div class="carousel-item active-fade"><img src="Items/head 4.jpg" alt="Slide 3" style="width:100%; height:500px; object-fit:cover;"><div class="carousel-content"><h2><span class="green-welcome">Welcome</span> to Chama Youth Resource Center</h2><p class="sub">We are a certified center under the Ministry of Youth, Sport and Arts, and proudly sponsored by TEVETA (Technical Education, Vocational and Entrepreneurship Training Authority)</p><button class="carousel-btn-apply" id="heroApplyBtn3">Apply now</button></div></div>
+      <div class="carousel-item active-fade"><img src="Items/head 5.jpg" alt="Slide 4" style="width:100%; height:500px; object-fit:cover;"><div class="carousel-content"><h2><span class="green-welcome">Welcome</span> to Chama Youth Resource Center</h2><p class="sub">Unlock Your Potential with Hands-On Skills, Industry-Recognized Certifications, and a community that Believes in You.</p><button class="carousel-btn-apply" id="heroApplyBtn4">Apply now</button></div></div>
+    </div>
+  </div>
+  <h2 class="section-header">We are Chama Youth Resource Centre</h2><br>
+  <div class="main-content"><p>Chama Youth Resource Center provides quality vocational training certified by TEVETA and the Ministry of Youth, Sport and Arts. 
+      We empower young people with practical skills for employment and entrepreneurship.<br></p>
+    <p>We believe that talent is universal, but opportunity is not. Our mission is to bridge that gap by providing accessible, high-quality technical and vocational training in the district and the surrounding areas. Whether you are looking to become a master craftsman, a Fashion Designer, an IT specialist, a Bricklayer, a Carpenter or an Entrepreneur, we provide the tools and the mentorship you need to succeed.</p><br>
+    <p><h3>Our Certifications:</h3></p><br>
+    <p>We are a certified center under the Ministry of Youth, Sport and Arts, and proudly sponsored by TEVETA. Our programs are structured to take you from a beginner to a certified professional. Upon completion of our courses, you will receive a nationally recognized certificate and regional Trade Test (Level III, II, or I).</p><br>
+    <p><h3>Why Choose Chama Youth Resource Center?</h3></p><br>
+    <p>· Practical Learning: Our curriculum is 70% practical.<br>· Accredited Training: Your certificate is recognized by the government.<br>· Flexible Enrollment: TEVET sponsorships, CDF, and self-sponsorship.<br>· Holistic Growth: We build character, leadership, and entrepreneurial spirit.</p>
+  </div>
+
+  <!-- Events -->
+  <div class="events-wrapper"><br>
+    <div class="events-header"><h3>Events & News</h3></div>
+    <div class="events-scroll-container">
+      <div class="events-grid" id="eventsGrid">
+        <!-- Event 1 -->
+        <div class="event-card"><div class="card-carousel"><div class="card-slide" id="cardSlide1" data-index="0">
+          <img src="'>Carpentry</text></svg>" alt="Carpentry" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%235a7f6a'/><text x='30' y='100' fill='white' font-size='28'>Joinery</text></svg>" alt="Joinery" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%234a6f5a'/><text x='30' y='100' fill='white' font-size='28'>ICT</text></svg>" alt="ICT" /></div><button class="card-nav left" onclick="event.stopPropagation(); slideCard('cardSlide1', -1)">‹</button><button class="card-nav right" onclick="event.stopPropagation(); slideCard('cardSlide1', 1)">›</button></div><h4>TEVETA certification drive</h4><div class="event-content" id="content1"><p>New cohort starts July 2026. Trade test level 3 & 1 available.</p><p>TEVETA accreditation ensures quality training.</p><p>Limited spaces – apply early.</p><p>Scholarships for rural candidates.</p><p>Contact admissions for details.</p></div><button class="read-more-btn" onclick="toggleReadMore('content1', this)">...read More</button><div class="video-btn-card"><button onclick="playVideo('TEVETA certification drive')"><i class="fas fa-play-circle"></i><strong>Watch Video</strong></button></div></div>
+        <!-- Event 2 -->
+        <div class="event-card"><div class="card-carousel"><div class="card-slide" id="cardSlide2" data-index="0">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%235a7f6a'/><text x='30' y='100' fill='white' font-size='28'>Textile</text></svg>" alt="Textile" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%233f6e5a'/><text x='30' y='100' fill='white' font-size='28'>Design</text></svg>" alt="Design" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%234a6f5a'/><text x='30' y='100' fill='white' font-size='28'>Bricklaying</text></svg>" alt="Bricklaying" /></div><button class="card-nav left" onclick="event.stopPropagation(); slideCard('cardSlide2', -1)">‹</button><button class="card-nav right" onclick="event.stopPropagation(); slideCard('cardSlide2', 1)">›</button></div><h4>CDF & TEVETA sponsorships</h4><div class="event-content" id="content2"><p>Apply for CDF or TEVETA sponsorship.</p><p>Self-sponsorship affordable.</p><p>Sponsorship covers tuition, materials, exams.</p><p>Contact for eligibility criteria.</p><p>Deadline: 30th June 2026.</p></div><button class="read-more-btn" onclick="toggleReadMore('content2', this)">...read More</button><div class="video-btn-card"><button onclick="playVideo('CDF & TEVETA sponsorships')"><i class="fas fa-play-circle"></i><strong>Watch Video</strong></button></div></div>
+        <!-- Event 3 -->
+        <div class="event-card"><div class="card-carousel"><div class="card-slide" id="cardSlide3" data-index="0">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%233f6e5a'/><text x='30' y='100' fill='white' font-size='28'>Plumbing</text></svg>" alt="Plumbing" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%235a7f6a'/><text x='30' y='100' fill='white' font-size='28'>Metal Fab</text></svg>" alt="Metal Fab" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%234a6f5a'/><text x='30' y='100' fill='white' font-size='28'>Agriculture</text></svg>" alt="Agriculture" /></div><button class="card-nav left" onclick="event.stopPropagation(); slideCard('cardSlide3', -1)">‹</button><button class="card-nav right" onclick="event.stopPropagation(); slideCard('cardSlide3', 1)">›</button></div><h4>New programs coming 2026</h4><div class="event-content" id="content3"><p>Plumbing, Metal fabrication, Agriculture.</p><p>State-of-the-art workshops installed.</p><p>Industry partnerships for internships.</p><p>Registration open for August 2026.</p><p>Early bird discounts available.</p></div><button class="read-more-btn" onclick="toggleReadMore('content3', this)">...read More</button><div class="video-btn-card"><button onclick="playVideo('New programs coming 2026')"><i class="fas fa-play-circle"></i><strong>Watch Video</strong></button></div></div>
+        <!-- Event 4 -->
+        <div class="event-card"><div class="card-carousel"><div class="card-slide" id="cardSlide4" data-index="0">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%233f6e5a'/><text x='30' y='100' fill='white' font-size='28'>Graduation</text></svg>" alt="Graduation" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%235a7f6a'/><text x='30' y='100' fill='white' font-size='28'>Certificates</text></svg>" alt="Certificates" />
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='180'><rect width='300' height='180' fill='%234a6f5a'/><text x='30' y='100' fill='white' font-size='28'>Awards</text></svg>" alt="Awards" /></div><button class="card-nav left" onclick="event.stopPropagation(); slideCard('cardSlide4', -1)">‹</button><button class="card-nav right" onclick="event.stopPropagation(); slideCard('cardSlide4', 1)">›</button></div>
+          <h4>Graduation ceremony 2026</h4><div class="event-content" id="content4"><p>Annual graduation December 2026.</p>
+            <p>200+ students to graduate.</p><p>Guest: Permanent Secretary, Youth Ministry.</p><p>Employers invited to scout talent.</p>
+            <p>TEVETA accredited certificates.</p></div><button class="read-more-btn" onclick="toggleReadMore('content4', this)">...read More</button><div class="video-btn-card"><button onclick="playVideo('Graduation ceremony 2026')"><i class="fas fa-play-circle"></i><strong>Watch Video</strong></button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT PAGE -->
+<section id="about" class="page">
+  <h2 class="section-header">About Us</h2><br>
+  <div class="main-content">
+    <p><strong>Chama Youth Resource Center</strong> is a certified skills training centre under the Ministry of Youth, Sport and Arts, located in Chama district, Eastern Province. We are the only recognised skills training centre in the circle of 164km. Currently, the institution runs four programmes: Bricklaying & Plastering, Carpentry & Joinery, Fashion, Design & Textile Technology, and ICT. We offer hands-on vocational training to empower youths with employable skills. <strong>Come One! Come All!</strong> at Chama Youth Resource, where you will learn lifelong survival skills, and contribute to the National Development of Zambia.</p><br>
+    <div class="grid-cards">
+      <div class="card"><h4>Motto</h4><p>“Skills Development Drives the Economy”</p></div>
+      <div class="card"><h4>Vision</h4><p>“To be an icon in Youth Skills Training in the region”</p></div>
+      <div class="card"><h4>Mission</h4><p>“To train and produce competent youths in various lifelong and entrepreneurship skills”</p></div>
+      <div class="card"><h4>Core Values</h4><p>“Creativity, Excellence, Integrity, Innovation, Inclusivity, Teamwork”</p></div>
+      <p>We are largely sponsored by TEVETA, and our graduates receive Trade Test Level III certificates after 3 months, with progression to Level II and Level I.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES PAGE -->
+<section id="services" class="page">
+  <h2 class="section-header">Our Services</h2>
+  <div class="main-content">
+    <p style="margin-top:1.5rem;">At Chama Youth Resource Center, we offer a diverse range of skill programs designed to match your passion and the demands of the modern job market. Our programs are structured to cater to different levels of expertise, from beginners to those looking to advance their skills. We offer flexible duration options: 3-month intensive (Trade Test Level III), 6-month intermediate (Level II), and 1-year comprehensive (Level I).</p><br>
+    <h3>Current Offerings (Available Now):</h3><br>
+    <p><strong>1. Carpentry and Joinery:</strong> From constructing door frames to building intricate furniture, our carpentry program provides students with fundamental skills for construction or starting a furniture business.</p><br>
+    <p><strong>2. Cutting, Design, and Textile Technology (Fashion Design):</strong> This program teaches pattern making, garment construction, fabric science, and fashion design. Graduates become fashion designers, tailors, and textile entrepreneurs.</p><br>
+    <p><strong>3. Bricklaying and Plastering:</strong> This course provides practical skills for construction, including brick laying, mortar mixing, plastering, and reading building plans. It is a direct pathway to employment in the construction sector.</p><br>
+    <p><strong>4. Information Technology (ICT):</strong> Our ICT program covers computer basics, software applications (Microsoft Office), internet usage, and basic computer maintenance. This course equips students for administrative roles and further tech specialization.</p><br>
+    <h3>Coming Soon (Future Programs):</h3><br>
+    <p><strong>+ Plumbing:</strong> Essential for sanitation and housing.<br><strong>+ Metal Fabrication:</strong> Welding and creating metal structures.<br><strong>+ Agriculture:</strong> Modern farming techniques.<br><strong>+ Entrepreneurship:</strong> Business management skills.<br><strong>+ Driving School (Re-opening Soon):</strong> Paused for logistical arrangements, will resume in the near future.</p><br>
+    <h3>Your Path to Certification:</h3><br>
+    <p><strong>· 3 Months (Level 3):</strong> Fundamental skills for entry-level jobs.<br><strong>· 6 Months (Level 2):</strong> Intermediate skills for supervisory roles.<br><strong>· 1 Year (Level 1):</strong> Advanced skills for master craftsmen.</p>
+  </div>
+</section>
+
+<!-- CONTACT / FIND US -->
+<section id="contact" class="page">
+  <div class="contacts-container">
+    <h2 class="section-header">Find Us / Contacts</h2><br>
+    <div class="main-content">
+      <p>We are the only recognised Skills Centre in the radius of 164 km in Chama District, about 2.5 km from Chama Post Office.<br>Located at stand No. 452, Opposite Birchand Cotton Ginnery along FTC Airport Road, P.O Box 540040, Chama, Eastern Province.</p><br>
+      <strong><h4>Contact the Centre Manager:</h4></strong><br>
+      <div><i class="fas fa-phone-alt"></i> <a href="tel:+260955765647" class="contacts">+260 955 765 647</a></div><br>
+      <div><i class="fas fa-phone-alt"></i> <a href="tel:+260976251167" class="contacts">+260 976 251 167</a></div><br>
+      <div><i class="fas fa-envelope"></i> Email: <a href="mailto:chamayouth12@gmail.com" class="contacts">chamayouth12@gmail.com</a></div><br>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-flex">
+    <div><h4 class="logo">Chama <span>Youth</span> Resource Centre</h4><p><i>"Skills Development Drives the Economy"</i></p><br><p>Located at Stand No. 452, <p>Opposite Birchand Cotton Ginnery,</p><p>P.O. Box 540040, CHAMA, </p><p>Eastern Province - ZAMBIA</p></div>
+    <div><h4>Contacts</h4><div class="footer-contacts"><div><i class="fas fa-phone-alt"></i> <a href="tel:+260955765647">+260 955 765 647</a></div><div><i class="fas fa-phone-alt"></i> <a href="tel:+260976251167">+260 976 251 167</a></div><div><i class="fas fa-envelope"></i> <a href="mailto:chamayouth12@gmail.com">chamayouth12@gmail.com</a></div></div></div>
+    <div><h4>Quick Links</h4><a href="#" onclick="switchPage('home')">Home</a><a href="#" onclick="switchPage('about')">About</a><a href="#" onclick="switchPage('services')">Services</a><a href="#" onclick="switchPage('contact')">Contact</a></div>
+  </div>
+  <div style="border-top:1px solid #2a4b6a; margin-top:1.5rem; padding-top:1rem; text-align:center; font-size:0.9rem;">&copy; 2026 Chama Youth Resource Center. All rights reserved.<p class="maker-id">Made by: Robert Ng'ambi | +260973388699</p></div>
+</footer>
+
+<!-- APPLICATION MODAL -->
+<div class="modal-overlay" id="applyModal">
+  <div class="modal-content">
+    <h3 class="apply-modal-head">Apply now</h3>
+    <p class="apply-modal-sub"><strong>Students can also apply by filling documents. </strong><a href="#" id="docToggleBtn">Click here to download</a></p>
+    <form id="applicationForm">
+      <label>Full name</label><input type="text" placeholder="Full name" />
+      <label>Sex</label><select><option>Male</option><option>Female</option></select>
+      <label>Age</label><input type="number" placeholder="Age" />
+      <label>Phone number</label><input type="tel" placeholder="Phone" />
+      <label>Constituency</label><input type="text" placeholder="Constituency" />
+      <label>Chiefdom</label><input type="text" placeholder="Chiefdom" />
+      <label>District</label><input type="text" placeholder="District" />
+      <label>Highest Education attended</label><select><option>Grade 7</option><option>Grade 9</option><option>Grade 12</option><option>Other tertiary program</option></select>
+      <label>Program want to attend</label><select><option>Carpentry & Joinery</option><option>Cutting, Design & Textile</option><option>Bricklaying & Plastering</option><option>ICT</option></select>
+      <label>Sponsors</label><select><option>TEVETA</option><option>CDF</option><option>Self</option><option>Other</option></select>
+      <div class="drag-box"><i class="fas fa-cloud-upload-alt fa-2x"></i><p>Drop your files or documents here</p><button>Choose files</button><p style="font-size:0.8rem; margin-top:0.3rem;">PNG, JPG, PDF, Word, .pub</p></div>
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+</div>
+
+<!-- DOCS MODAL -->
+<div class="doc-modal-overlay" id="docModal">
+  <div class="doc-modal-content">
+    <button class="doc-close-btn" onclick="closeDocModal()"><i class="fas fa-times"></i></button>
+    <h3 style="margin-top:0; margin-bottom:1.5rem;">📄 Document Center</h3>
+    <p style="color:#555; margin-bottom:1.5rem; font-size:0.95rem;">Download, open, or preview our official documents.</p>
+    <div id="docList" class="doc-list"></div>
+    <div class="preview-area" id="previewArea">
+      <div class="preview-header"><strong id="previewTitle" style="color:#0a2a4a;">Preview</strong><button class="close-preview" onclick="closePreview()">Close Preview</button></div>
+      <iframe id="previewFrame" src=""></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----- PAGE NAVIGATION -----
+  const pages = document.querySelectorAll('.page');
+  const navBtns = document.querySelectorAll('.nav-btn');
+
+  function switchPage(pageId) {
+    pages.forEach(p => p.classList.remove('active-page'));
+    document.getElementById(pageId).classList.add('active-page');
+    navBtns.forEach(b => b.classList.remove('active'));
+    document.querySelector(`.nav-btn[data-page="${pageId}"]`)?.classList.add('active');
+    document.getElementById('applyModal').classList.remove('open');
+    document.getElementById('docModal').classList.remove('open');
+    closeMenu(); // close mobile menu on page switch
+  }
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchPage(btn.dataset.page);
+    });
+  });
+
+  // ----- HAMBURGER MENU -----
+  const hamburger = document.getElementById('hamburgerBtn');
+  const navMenu = document.getElementById('navMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
+
+  function toggleMenu() {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('open');
+    menuOverlay.classList.toggle('active');
+  }
+  function closeMenu() {
+    hamburger.classList.remove('active');
+    navMenu.classList.remove('open');
+    menuOverlay.classList.remove('active');
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  menuOverlay.addEventListener('click', closeMenu);
+
+  // close menu on any nav click (mobile)
+  document.querySelectorAll('.nav-menu .nav-btn, .nav-menu .apply-nav').forEach(btn => {
+    btn.addEventListener('click', closeMenu);
+  });
+
+  // ----- FADE CAROUSEL -----
+  let currentFade = 0;
+  const fadeItems = document.querySelectorAll('.carousel-item');
+  function showFade(index) {
+    fadeItems.forEach((el, i) => el.classList.toggle('active-fade', i === index));
+  }
+  function nextFade() {
+    currentFade = (currentFade + 1) % fadeItems.length;
+    showFade(currentFade);
+  }
+  setInterval(nextFade, 7000);
+  showFade(0);
+
+  // ----- CARD CAROUSEL -----
+  function slideCard(id, dir) {
+    const slide = document.getElementById(id);
+    if (!slide) return;
+    const imgs = slide.children;
+    let current = parseInt(slide.dataset.index) || 0;
+    current = (current + dir + imgs.length) % imgs.length;
+    slide.dataset.index = current;
+    slide.style.transform = `translateX(-${current * 100}%)`;
+  }
+
+  // ----- READ MORE -----
+  function toggleReadMore(contentId, btn) {
+    const content = document.getElementById(contentId);
+    if (!content) return;
+    content.classList.toggle('expanded');
+    btn.textContent = content.classList.contains('expanded') ? '...read Less' : '...read More';
+  }
+
+  // ----- VIDEO PLAY -----
+  function playVideo(eventName) {
+    alert(`🎬 Playing video for: ${eventName}\n\nVideo content would play here.`);
+  }
+
+  // ----- MODALS -----
+  const modal = document.getElementById('applyModal');
+  document.getElementById('applyNavBtn').addEventListener('click', () => modal.classList.toggle('open'));
+  document.querySelectorAll('.carousel-btn-apply').forEach(b => b.addEventListener('click', () => modal.classList.add('open')));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+
+  // ----- DOCS MODAL -----
+  const docModal = document.getElementById('docModal');
+  document.getElementById('docToggleBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    docModal.classList.toggle('open');
+    if (docModal.classList.contains('open')) { renderDocuments(); closePreview(); }
+  });
+  docModal.addEventListener('click', (e) => { if (e.target === docModal) closeDocModal(); });
+
+  function closeDocModal() {
+    docModal.classList.remove('open');
+    closePreview();
+  }
+
+  // ----- DOCUMENT DATA -----
+  const documents = [
+    { name: "application_form.pdf", title: "Application Form" },
+    { name: "consent_form.pdf", title: "Consent Form" },
+    { name: "sponsorship_letter.pdf", title: "Sponsorship Letter" },
+    { name: "training_brochure.pdf", title: "Training Brochure" },
+    { name: "fee_structure.pdf", title: "Fee Structure 2026" },
+  ];
+
+  function renderDocuments() {
+    const docList = document.getElementById('docList');
+    if (!docList) return;
+    docList.innerHTML = '';
+    documents.forEach((doc) => {
+      const filePath = `docs/${doc.name}`;
+      const item = document.createElement('div');
+      item.className = 'doc-item';
+      item.innerHTML = `
+        <span class="doc-name"><i class="fas fa-file-pdf"></i> ${doc.title}</span>
+        <div class="doc-btn-group">
+          <a href="${filePath}" download="${doc.name}" class="doc-btn doc-btn-download"><i class="fas fa-download"></i> Download</a>
+          <button onclick="openDocument('${filePath}')" class="doc-btn doc-btn-open"><i class="fas fa-external-link-alt"></i> Open</button>
+          <button onclick="showPreview('${filePath}', '${doc.title}')" class="doc-btn doc-btn-preview"><i class="fas fa-eye"></i> Preview</button>
+        </div>
+      `;
+      docList.appendChild(item);
+    });
+  }
+
+  function openDocument(path) { window.open(path, '_blank'); }
+
+  function showPreview(path, title) {
+    const previewArea = document.getElementById('previewArea');
+    const previewFrame = document.getElementById('previewFrame');
+    const previewTitle = document.getElementById('previewTitle');
+    if (!previewArea || !previewFrame || !previewTitle) return;
+    previewTitle.textContent = `📄 ${title}`;
+    previewFrame.src = path;
+    previewArea.style.display = 'block';
+    previewArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function closePreview() {
+    const previewArea = document.getElementById('previewArea');
+    const previewFrame = document.getElementById('previewFrame');
+    if (previewFrame) previewFrame.src = '';
+    if (previewArea) previewArea.style.display = 'none';
+  }
+  // ----- FORM SUBMIT -----
+  document.getElementById('applicationForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Application submitted (demo) to info@chamayouth.org');
+    modal.classList.remove('open');
+  });
+  // init
+  switchPage('home');
+  renderDocuments();
+</script>
+</body>
+</html>
